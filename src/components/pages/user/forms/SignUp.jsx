@@ -38,6 +38,31 @@ const SignUp = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertType, setAlertType] = useState('');
     const [alertText, setAlertText] = useState('');
+    const [initialUser] = useState({
+        name: '',
+        surname: '',
+        fathersName: '',
+        birthday: dayjs(new Date()),
+        gender: genders.at(0),
+        passportSeries: '',
+        passportNumber: '',
+        passportId: '',
+        passportIssued: '',
+        passportIssuedDate: dayjs(new Date()),
+        placeOfBirth: '',
+        city: cities ? cities.at(0) : '',
+        address: '',
+        phoneHomeNumber: '',
+        mobileNumber: '',
+        email: '',
+        addressOfResidence: '',
+        familyStatus: familyStatuses ? familyStatuses.at(0) : '',
+        nationality: nationalities ? nationalities.at(0) : '',
+        disability: disabilities ? disabilities.at(0) : '',
+        isPensioner: false,
+        monthlyIncome: '',
+        isReservist: false,
+    })
 
     useEffect(() => {
         fetchData();
@@ -67,32 +92,6 @@ const SignUp = () => {
             .catch(() => setIsLoading(false));
         setIsLoading(false);
     }
-
-    const [initialUser, setInitialUser] = useState({
-        name: '',
-        surname: '',
-        fathersName: '',
-        birthday: dayjs(new Date()),
-        gender: genders.at(0),
-        passportSeries: '',
-        passportNumber: '',
-        passportId: '',
-        passportIssued: '',
-        passportIssuedDate: dayjs(new Date()),
-        placeOfBirth: '',
-        city: '',
-        address: '',
-        phoneHomeNumber: '',
-        mobileNumber: '',
-        email: '',
-        addressOfResidence: '',
-        familyStatus: '',
-        nationality: '',
-        disability: '',
-        isPensioner: false,
-        monthlyIncome: '',
-        isReservist: false,
-    })
 
     const validationSchema = yup.object().shape({
         name: yup.string().required('Name cannot be empty')
@@ -140,8 +139,8 @@ const SignUp = () => {
         },
     });
 
-    const handleSubmit = () => {
-        const requestUser = {
+    const getRequestUser = () => {
+        return {
             name: formik.values.name,
             surname: formik.values.surname,
             fathersName: formik.values.fathersName,
@@ -166,14 +165,14 @@ const SignUp = () => {
             monthlyIncome: formik.values.monthlyIncome === '' ? null : formik.values.monthlyIncome,
             isReservist: formik.values.isReservist,
         }
+    }
 
-        console.log(requestUser)
-
+    const handleSubmit = () => {
+        const requestUser = getRequestUser();
         UserService.createUser(requestUser)
             .then(() => {
                 setAlertText("User successfully saved!")
                 setAlertType("success")
-                setTimeout(3000);
                 navigate('/users')
             })
             .catch((error) => {
@@ -477,9 +476,9 @@ const SignUp = () => {
                                         labelId="disability-select-label"
                                         id="disability-select"
                                         value={formik.values.disability}
+                                        defaultValue={disabilities.at(0)}
                                         name={"disability"}
                                         label="Disability"
-                                        defaultValue={disabilities.at(0)}
                                         onChange={formik.handleChange}
                                     >
                                         {disabilities.map((disability) => {

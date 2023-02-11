@@ -12,26 +12,21 @@ const RemoveUserDialog = (props) => {
             .catch(e => console.log(e));
     });
 
-    const Content = () => {
-        if (user === null) {
-            return (
-                <Box display="flex" justifyContent="center">
-                    <CircularProgress/>
-                </Box>
-            )
-        }
-        return (
+    const MessageInfo = () => {
+        return !user ?
+            <Box display="flex" justifyContent="center">
+                <CircularProgress/>
+            </Box> :
             <div>
                 You definitely want to delete the user: {user.name + ' ' + user.surname}?
             </div>
-        )
     }
 
     return (
         <Dialog open={props.open} onClose={props.onClose} maxWidth='sm' fullWidth>
             <DialogTitle>Delete User</DialogTitle>
             <DialogContent style={{paddingTop: "0px"}}>
-                <Content/>
+                <MessageInfo/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.onClose} variant='contained'
@@ -39,7 +34,7 @@ const RemoveUserDialog = (props) => {
                 <Button variant='contained'
                         style={{background: 'red'}}
                         type="submit"
-                        disabled={user == null}
+                        disabled={!user}
                         onClick={() => {
                             UserService.deleteUser(user.id)
                                 .then()
@@ -48,7 +43,7 @@ const RemoveUserDialog = (props) => {
                             window.location.reload();
                         }}
                 >
-                    {user == null ? <CircularProgress/> : "Delete"}
+                    {!user ? <CircularProgress/> : "Delete"}
                 </Button>
             </DialogActions>
         </Dialog>

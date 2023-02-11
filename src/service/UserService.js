@@ -3,19 +3,19 @@ import axios from "axios";
 const API_URL = "http://localhost:8080/api/v1/users";
 
 class UserService {
-    static async getAllUsers(page = 1, size = 10) {
+    static async getAllUsers(page = 0, size = 10) {
         return await axios.get(`${API_URL}`,
             {
                 params: {
-                    pageIndex: page,
+                    page: page,
                     size: size,
                 }
             }
         );
     };
 
-    static async updateUser(requestUser) {
-        return await axios.patch(`${API_URL}`, requestUser);
+    static async updateUser(user) {
+        return await axios.patch(`${API_URL}`, user);
     }
 
     static async getUserById(id) {
@@ -23,13 +23,13 @@ class UserService {
         );
     };
 
-    static async getCount() {
+    static async getCountOfUsers() {
         return await axios.get(`${API_URL}/count`, {}
         );
     };
 
-    static async createUser(requestUser) {
-        return await axios.post(`${API_URL}`, requestUser);
+    static async createUser(user) {
+        return await axios.post(`${API_URL}`, user);
     };
 
     static async deleteUser(id) {

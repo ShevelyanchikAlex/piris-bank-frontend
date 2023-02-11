@@ -121,15 +121,14 @@ const EditUser = () => {
         validateOnChange: true,
         enableReinitialize: true,
         onSubmit: async (values, {setSubmitting}) => {
-            console.log(values)
             setSubmitting(true)
             await handleSubmit()
             setSubmitting(false)
         },
     });
 
-    const handleSubmit = () => {
-        const requestUser = {
+    const getRequestUser = () => {
+        return  {
             id: formik.values.id,
             name: formik.values.name,
             surname: formik.values.surname,
@@ -155,14 +154,14 @@ const EditUser = () => {
             monthlyIncome: formik.values.monthlyIncome === '' ? null : formik.values.monthlyIncome,
             isReservist: formik.values.isReservist,
         }
+    }
 
-        console.log(requestUser)
-
+    const handleSubmit = () => {
+        const requestUser = getRequestUser();
         UserService.updateUser(requestUser)
             .then(() => {
                 setAlertText("User successfully updated!")
                 setAlertType("success")
-                setTimeout(3000);
                 navigate('/users')
             })
             .catch((error) => {
@@ -177,7 +176,10 @@ const EditUser = () => {
     return (
         <div>
             <h1 style={{marginTop: '6%', textAlign: "center"}}>Edit User</h1>
-            {isLoading ? <CircularProgress style={{marginLeft: '50%', marginRight: '50%', marginTop: '10%'}}/> :
+            {isLoading ?
+                <Box display="flex" justifyContent="center">
+                    <CircularProgress/>
+                </Box> :
                 <Card align={"center"}
                       sx={{
                           marginLeft: 40,
@@ -361,7 +363,7 @@ const EditUser = () => {
                                         name={"city"}
                                         label="Current city"
                                         onChange={formik.handleChange}
-                                        // defaultValue={formik.values.city}
+                                        defaultValue={formik.values.city}
                                     >
                                         {
                                             cities.map((item, index) => (
@@ -435,7 +437,7 @@ const EditUser = () => {
                                         value={formik.values.familyStatus}
                                         label="Family status"
                                         onChange={formik.handleChange}
-                                        defaultValue={familyStatuses.at(0)}
+                                        defaultValue={formik.values.familyStatus}
                                     >
                                         {familyStatuses.map((familyStatus) => {
                                             return <MenuItem
@@ -452,7 +454,7 @@ const EditUser = () => {
                                         name={"nationality"}
                                         label="Nationality"
                                         onChange={formik.handleChange}
-                                        defaultValue={nationalities.at(0)}
+                                        defaultValue={formik.values.nationality}
                                     >
                                         {nationalities.map((nationality) => {
                                             return <MenuItem
@@ -468,7 +470,7 @@ const EditUser = () => {
                                         value={formik.values.disability}
                                         name={"disability"}
                                         label="Disability"
-                                        defaultValue={disabilities.at(0)}
+                                        defaultValue={formik.values.disability}
                                         onChange={formik.handleChange}
                                     >
                                         {disabilities.map((disability) => {

@@ -23,8 +23,10 @@ const Users = () => {
     const [selectedUserId, setSelectedUserId] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [openRemoveUserDialog, setOpenRemoveUserDialog] = useState(false)
-    const page = 1;
-    const size = 10;
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [countOfUsers, setCountOfUsers] = useState(10);
+    const rowsPerPage = [5, 10, 20];
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,11 +37,24 @@ const Users = () => {
                 setIsLoading(false);
             })
             .catch(() => setIsLoading(false));
+        UserService.getCountOfUsers()
+            .then(response => {
+                setCountOfUsers(response.data)
+            })
+            .catch((error) => console.log(error));
     }, [page, size]);
+
 
     const handleRemoveUser = (userId) => {
         setOpenRemoveUserDialog(true);
         setSelectedUserId(userId);
+    }
+
+    const handleChangePage = (event, newPage) => setPage(newPage);
+
+    const handleChangeSize = (val) => {
+        setSize(parseInt(val.target.value, 10));
+        setPage(0);
     }
 
     return (isLoading ? <CircularProgress/> :
@@ -50,7 +65,7 @@ const Users = () => {
                         onClose={() => setOpenRemoveUserDialog(false)}
                         userId={selectedUserId}
                     />
-                    <TableContainer sx={{marginY: 10, maxHeight: 620}}>
+                    <TableContainer sx={{marginY: 10, height: 500}}>
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead>
                                 <TableRow>
@@ -116,13 +131,14 @@ const Users = () => {
                         </Table>
                     </TableContainer>
                     <TablePagination
-                        rowsPerPageOptions={[10, 25, 100]}
+                        sx={{display: "flex", justifyContent: "center"}}
+                        rowsPerPageOptions={rowsPerPage}
                         component="div"
-                        count={20}
-                        rowsPerPage={10}
+                        count={countOfUsers}
+                        rowsPerPage={size}
                         page={page}
-                        // onPageChange={}
-                        // onRowsPerPageChange={}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeSize}
                     />
                 </div>
         ));
