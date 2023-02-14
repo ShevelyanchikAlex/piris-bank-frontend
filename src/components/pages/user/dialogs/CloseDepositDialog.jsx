@@ -1,27 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar} from "@mui/material";
 import Button from "@mui/material/Button";
-import UserService from "../../../../service/UserService";
+import DepositService from "../../../../service/DepositService";
 
-const RemoveUserDialog = (props) => {
-    const [user, setUser] = useState({});
+const CloseDepositDialog = (props) => {
+    const [deposit, setDeposit] = useState({});
     const [showAlert, setShowAlert] = useState(false);
     const [alertType] = useState('error');
     const [alertText, setAlertText] = useState('');
 
     useEffect(() => {
-        UserService.getUserById(props.userId)
-            .then(response => setUser(response.data))
+        DepositService.getDepositById(props.depositId)
+            .then(response => setDeposit(response.data))
             .catch(e => console.log(e));
     });
 
     const MessageInfo = () => {
-        return !user ?
+        return !deposit ?
             <Box display="flex" justifyContent="center">
                 <CircularProgress/>
             </Box> :
             <div>
-                You definitely want to delete the user: {user.name + ' ' + user.surname}?
+                You definitely want to close this deposit: {deposit.contractNumber}?
             </div>
     }
 
@@ -34,7 +34,7 @@ const RemoveUserDialog = (props) => {
                 </Alert>
             </Snackbar>
             <Dialog open={props.open} onClose={props.onClose} maxWidth='sm' fullWidth>
-                <DialogTitle>Delete User</DialogTitle>
+                <DialogTitle>Close Deposit</DialogTitle>
                 <DialogContent style={{paddingTop: "0px"}}>
                     <MessageInfo/>
                 </DialogContent>
@@ -44,9 +44,9 @@ const RemoveUserDialog = (props) => {
                     <Button variant='contained'
                             style={{background: 'red'}}
                             type="submit"
-                            disabled={!user}
+                            disabled={!deposit}
                             onClick={() => {
-                                UserService.deleteUser(user.id)
+                                DepositService.closeDeposit(deposit.id)
                                     .then(() => {
                                         props.onClose();
                                         window.location.reload();
@@ -55,9 +55,10 @@ const RemoveUserDialog = (props) => {
                                         setAlertText(e.response.data);
                                         setShowAlert(true);
                                     });
+
                             }}
                     >
-                        {!user ? <CircularProgress/> : "Delete"}
+                        {!deposit ? <CircularProgress/> : "Close deposit"}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -65,4 +66,4 @@ const RemoveUserDialog = (props) => {
     );
 };
 
-export default RemoveUserDialog;
+export default CloseDepositDialog;
